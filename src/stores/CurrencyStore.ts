@@ -122,6 +122,7 @@ class CurrencyStore {
                     localStorage.setItem('Account', login);
                     localStorage.setItem(login, JSON.stringify([])); 
                     this.error = null;
+                    this.updateItemsWithFavorites();
                 } else {
                     this.error = data.error || 'Ошибка регистрации';
                     this.successMessage = null;
@@ -154,6 +155,7 @@ class CurrencyStore {
                     localStorage.setItem('Account', login); 
                     this.getFavoriteData(); 
                     this.error = null;
+                    this.updateItemsWithFavorites();
                 } else {
                     this.error = data.error || 'Ошибка авторизации';
                     this.successMessage = null;

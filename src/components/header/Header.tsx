@@ -16,9 +16,8 @@ function Header () {
   }, [currencyStore.account]);
 
   const handleLogout = () => {
-    currencyStore.account = ''; 
-    localStorage.removeItem('Account'); 
-    localStorage.removeItem(currencyStore.account);
+    currencyStore.account = '';
+    currencyStore.updateItemsWithFavorites();
   };
 
   return (
