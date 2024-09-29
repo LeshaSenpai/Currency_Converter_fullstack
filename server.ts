@@ -1,9 +1,10 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const { sequelizeCurrencies, sequelizeAccounts } = require('./database');
-const Currency = require('./models/Currency'); 
-const Account = require('./models/Account');  
+import bodyParser from 'body-parser';
+import { sequelizeCurrencies, sequelizeAccounts } from './database';
+
+import Currency from './src/back/models/Currency'; 
+import Account from './src/back/models/Account';
 
 const app = express();
 app.use(cors());
@@ -12,7 +13,7 @@ app.use(bodyParser.json());
 sequelizeCurrencies.authenticate().then(() => sequelizeCurrencies.sync());
 sequelizeAccounts.authenticate().then(() => sequelizeAccounts.sync());
 
-app.post('/accounts', async (req, res) => {
+app.post('/accounts', async (req: Request, res: Response) => {
     const { username, login, password } = req.body;
 
     if (!username || !login || !password) {
@@ -33,16 +34,16 @@ app.post('/accounts', async (req, res) => {
     }
 });
 
-app.get("/currencies", async (req, res) => {
+app.get('/currencies', async (req: Request, res: Response) => {
     try {
-        const currencies = await Currency.findAll(); 
+        const currencies = await Currency.findAll();
 
         const initialItems = currencies.map(row => ({
             text: row.text,
             symbol: row.symbol,
             code: row.code,
             currencyCode: row.currencycode,
-            rate: parseFloat(row.rates)
+            rate: parseFloat(row.rates.toString()),
         }));
 
         res.json(initialItems);
@@ -50,7 +51,8 @@ app.get("/currencies", async (req, res) => {
         res.status(500).json({ error: "Ошибка при получении данных с базы" });
     }
 });
-app.post('/accounts/login', async (req, res) => {
+
+app.post('/accounts/login', async (req: Request, res: Response) => {
     const { login, password } = req.body;
 
     if (!login || !password) {
@@ -69,8 +71,9 @@ app.post('/accounts/login', async (req, res) => {
         res.status(500).json({ error: 'Ошибка при авторизации' });
     }
 });
-app.get('/getUsername', async (req, res) => {
-    const { login } = req.query;
+
+app.get('/getUsername', async (req: Request, res: Response) => {
+    const login = req.query.login as string;
 
     try {
         const account = await Account.findOne({ where: { login } });
