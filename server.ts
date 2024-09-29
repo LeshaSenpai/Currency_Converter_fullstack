@@ -3,8 +3,8 @@ const cors = require('cors');
 import bodyParser from 'body-parser';
 import { sequelizeCurrencies, sequelizeAccounts } from './database';
 
-import Currency from './models/Currency'; 
-import Account from './models/Account';
+import Currency from './src/back/models/Currency'; 
+import Account from './src/back/models/Account';
 
 const app = express();
 app.use(cors());
