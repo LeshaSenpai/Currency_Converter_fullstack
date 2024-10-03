@@ -113,23 +113,22 @@ class CurrencyStore {
                 body: JSON.stringify({ username, login, password }),
             });
 
-            const data = await response.json();
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка регистрации');
+            }
 
             runInAction(() => {
-                if (response.ok) {
-                    this.successMessage = 'Регистрация успешна';
-                    this.account = login;
-                    localStorage.setItem('Account', login);
-                    localStorage.setItem(login, JSON.stringify([]));
-                    this.updateItemsWithFavorites();
-                } else {
-                    this.error = data.error || 'Ошибка регистрации';
-                    this.successMessage = null;
-                }
+                this.successMessage = 'Регистрация успешна';
+                this.account = login;
+                localStorage.setItem('Account', login);
+                localStorage.setItem(login, JSON.stringify([])); 
+                this.updateItemsWithFavorites();
+                this.error = null;
             });
-        } catch (err) {
+        } catch (err: any) {
             runInAction(() => {
-                this.error = 'Ошибка при отправке данных на сервер';
+                this.error = err.message || 'Ошибка при отправке данных на сервер';
                 this.successMessage = null;
             });
         }
@@ -145,27 +144,25 @@ class CurrencyStore {
                 body: JSON.stringify({ login, password }),
             });
 
-            const data = await response.json();
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка авторизации');
+            }
 
             runInAction(() => {
-                if (response.ok) {
-                    this.successMessage = 'Авторизация успешна';
-                    this.account = login;
-                    localStorage.setItem('Account', login);
-                    this.getFavoriteData();
-                    this.updateItemsWithFavorites();
-                } else {
-                    this.error = data.error || 'Ошибка авторизации';
-                    this.successMessage = null;
-                }
+                this.successMessage = 'Авторизация успешна';
+                this.account = login;
+                localStorage.setItem('Account', login);  
+                this.getFavoriteData();
+                this.updateItemsWithFavorites();
+                this.error = null;
             });
-        } catch (err) {
+        } catch (err: any) {
             runInAction(() => {
-                this.error = 'Ошибка при отправке данных на сервер';
+                this.error = err.message || 'Ошибка при отправке данных на сервер';
                 this.successMessage = null;
             });
         }
     }
 }
-
 export const currencyStore = new CurrencyStore();

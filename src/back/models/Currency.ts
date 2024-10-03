@@ -1,53 +1,42 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-const { sequelizeCurrencies} = require('../../../database');
+import { Table, Column, Model } from 'sequelize-typescript';
+import { DataType } from 'sequelize-typescript';
 
-interface CurrencyAttributes {
-    text: string;
-    symbol: string;
-    code: string; 
-    currencycode: string;
-    rates: number;
-}
-
-interface CurrencyCreationAttributes extends Optional<CurrencyAttributes, 'code'> {}
-
-class Currency extends Model<CurrencyAttributes, CurrencyCreationAttributes> implements CurrencyAttributes {
-    public text!: string;
-    public symbol!: string;
-    public code!: string;
-    public currencycode!: string;
-    public rates!: number;
-}
-
-Currency.init({
-    text: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    symbol: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    code: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        primaryKey: true,
-    },
-    currencycode: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    rates: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-    },
-}, {
-    sequelize: sequelizeCurrencies,
+@Table({
     tableName: 'currencies', 
     timestamps: false, 
-    updatedAt: false,
-    createdAt: false,
-    freezeTableName: true 
-});
+    freezeTableName: true, 
+})
+class Currency extends Model {
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    text!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    symbol!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+        primaryKey: true,
+    })
+    code!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    currencycode!: string;
+
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: false,
+    })
+    rates!: number;
+}
 
 export default Currency;
