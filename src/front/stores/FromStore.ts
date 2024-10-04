@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import { ItemType } from "../api/CurrencyApi";
 
 export type RawRatesType = {
     [key: string]: number;
@@ -6,7 +7,7 @@ export type RawRatesType = {
 
 class CurrencyStore {
     rates: RawRatesType | null = null;
-    items: any[] = [];
+    items: ItemType[] = [];
     favorite: string[] = [];
     loading: boolean = true;
     error: string | null = null;

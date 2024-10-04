@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
-import Account from './src/back/models/Account';
-import Currency from './src/back/models/Currency';
+import Account from './models/Account';
+import Currency from './models/Currency';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,5 +12,5 @@ export const sequelize = new Sequelize({
     password: process.env.DB_PASSWORD,  
     database: process.env.DB_NAME,      
     models: [Account, Currency],        
-    logging: false,                     
+    logging: true,                     
 });

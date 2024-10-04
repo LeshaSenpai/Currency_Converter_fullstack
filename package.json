@@ -33,11 +33,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "npm run build && node dist/server.js",
-    "server": "node dist/server.js",
-    "client": "react-scripts start --scripts-version custom --config-overrides src/front",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "tsc --outDir dist --rootDir src/front",
+    "start": "npm run build && node dist/back/server.js",
+    "server": "tsc --outDir dist && node dist/back/server.js", 
+    "client": "react-scripts start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"", 
+    "build": "tsc --outDir dist --rootDir src",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -60,7 +60,7 @@
     ]
   },
   "description": "This is a simple currency converter application built with React. The application allows users to view exchange rates for various currencies and mark certain currencies as favorites, which will be saved and persisted between sessions.",
-  "main": "dist/server.js",
+  "main": "dist/back/server.js",
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -34,7 +34,6 @@ export const loginAccount = async (req: Request, res: Response) => {
 
 export const fetchUsername = async (req: Request, res: Response) => {
     const login = req.query.login as string;
-
     try {
         const result = await getUsername(login);
         res.status(result.status).json(result.data);

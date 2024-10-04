@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 const cors = require('cors');
 import bodyParser from 'body-parser';
-import { sequelize } from '../../../database';
+import { sequelize } from '../database';
 import Currency from '../models/Currency';
 import Account from '../models/Account';
 
@@ -46,9 +46,7 @@ app.post('/accounts', async (req: Request, res: Response) => {
 
 app.post('/accounts/login', async (req: Request, res: Response) => {
     const { login, password } = req.body;
-
     try {
-
         const account = await Account.findOne({ where: { login, password } });
 
         if (!account) {
@@ -59,8 +57,4 @@ app.post('/accounts/login', async (req: Request, res: Response) => {
         console.error('Ошибка авторизации:', err);
         res.status(500).json({ error: 'Ошибка авторизации' });
     }
-});
-
-app.listen(5000, () => {
-    console.log("Сервер запущен на порту 5000");
 });
