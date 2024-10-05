@@ -6,7 +6,7 @@ export const getCurrencies = async (req: Request, res: Response) => {
         const currencies = await fetchAllCurrencies();
         res.json(currencies);
     } catch (err) {
-        res.status(500).json({ error: "Ошибка при получении данных с базы" });
+        res.status(502).json({ error: "Ошибка при получении данных с базы" });
     }
 };
     
