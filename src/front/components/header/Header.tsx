@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { currencyStore } from '../../stores/CurrencyStore';
+import { currencyStore } from '../../stores/FromStore';
 import "./Header.css";
 
 function Header () {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { SelectCurrency } from "../../components/selectCurrency/SelectCurrency";
-import { currencyStore} from '../../stores/CurrencyStore';
+import { SelectCurrency } from "../../components/selectCurrency/SelectCurrency"; 
+import { currencyStore} from '../../stores/FromStore';
 import { ItemType } from "../../api/CurrencyApi";
 import "./CurrencyConvert.css";
 

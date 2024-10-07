@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Link } from "react-router-dom";
-import { currencyStore } from '../../stores/CurrencyStore';
+import { currencyStore } from '../../stores/FromStore';
 import './Registration.css';
 
 const Registration = observer(() => {

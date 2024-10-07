@@ -1,12 +1,11 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { currencyStore } from '../../stores/CurrencyStore';
+import { currencyStore } from '../../stores/FromStore';
 import './Rates.css';
 
 const Rates = observer(() => {
     const {
         loading,
-        error,
         items,
         toggleFavorite,
     } = currencyStore;
