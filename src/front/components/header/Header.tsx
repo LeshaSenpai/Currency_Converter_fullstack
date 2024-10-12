@@ -3,21 +3,32 @@ import { Link } from "react-router-dom";
 import { currencyStore } from '../../stores/FromStore';
 import "./Header.css";
 
-function Header () {
+function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [username, setUsername] = useState('');
 
+  
   useEffect(() => {
     if (currencyStore.account) {
       fetch(`http://localhost:5000/getUsername?login=${currencyStore.account}`)
         .then(response => response.json())
-        .then(data => setUsername(data.username));
+        .then(data => {
+          if (data.success) {
+            setUsername(data.data.username);  
+          } else {
+            setUsername(''); 
+          }
+        })
+        .catch(() => setUsername(''));  
     }
   }, [currencyStore.account]);
 
+  
   const handleLogout = () => {
     currencyStore.account = '';
-    currencyStore.updateItemsWithFavorites();
+    localStorage.removeItem('Account'); 
+    currencyStore.updateItemsWithFavorites(); 
+    setUsername(''); 
   };
 
   return (
@@ -40,7 +51,7 @@ function Header () {
                   {currencyStore.account ? (
                     <>
                       <li>
-                        <span>{username}</span>
+                        <span>{username || 'Пользователь'}</span> {/* Имя пользователя или текст по умолчанию */}
                       </li>
                       <li>
                         <button onClick={handleLogout}>Выйти</button>
