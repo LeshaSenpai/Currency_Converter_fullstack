@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, CreatedAt, UpdatedAt, AllowNull, Unique } from 'sequelize-typescript';
 
 @Table({
     tableName: 'currencies', 
@@ -8,53 +8,39 @@ import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, CreatedAt, U
 class Currency extends Model {
     @PrimaryKey
     @AutoIncrement
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
+    @AllowNull(false)
+    @Column(DataType.INTEGER)
     id!: number;
 
-    @Column({
-        type: DataType.STRING(100),
-        allowNull: false,
-    })
+    @AllowNull(false)
+    @Column(DataType.STRING(100))
     text!: string;
 
-    @Column({
-        type: DataType.STRING(10),
-        allowNull: false,
-    })
+    @AllowNull(false)
+    @Column(DataType.STRING(10))
     symbol!: string;
 
-    @Column({
-        type: DataType.STRING(10),
-        allowNull: false,
-        unique: true,
-    })
+    @AllowNull(false)
+    @Unique
+    @Column(DataType.STRING(10))
     code!: string;
 
-    @Column({
-        type: DataType.STRING(10),
-        allowNull: false,
-    })
+    @AllowNull(false)
+    @Column(DataType.STRING(10))
     currencycode!: string;
 
-    @Column({
-        type: DataType.DECIMAL(10, 2),
-        allowNull: false,
-    })
+    @AllowNull(false)
+    @Column(DataType.DECIMAL(10, 2))
     rates!: number;
 
     @CreatedAt
-    @Column({
-        type: DataType.DATE,
-    })
+    @AllowNull(false)
+    @Column(DataType.DATE)
     createdat!: Date;
 
     @UpdatedAt
-    @Column({
-        type: DataType.DATE,
-    })
+    @AllowNull(false)
+    @Column(DataType.DATE)
     updatedat!: Date;
 }
 

@@ -2,29 +2,29 @@ import { Request, Response } from 'express';
 import { registerUser, loginUser, getUsername } from '../services/accountService';
 import { successResponse, failureResponse } from '../utils/responseHelper';
 import {
-    ERROR_INVALID_REGISTRATION_DATA,
-    SUCCESS_USER_REGISTERED,
-    ERROR_REGISTRATION,
-    ERROR_INVALID_LOGIN_DATA,
-    SUCCESS_LOGIN,
-    ERROR_LOGIN,
-    ERROR_LOGIN_NOT_PROVIDED,
-    SUCCESS_USERNAME_FOUND,
-    ERROR_FETCH_USERNAME,
+    error_invalid_registration_data,
+    success_user_registered,
+    error_registration,
+    error_invalid_login_data,
+    success_login,
+    error_login,
+    error_login_not_provided,
+    success_username_found,
+    error_fetch_username
 } from '../constant';
 
 export const registerAccount = async (req: Request, res: Response) => {
     const { username, login, password } = req.body;
 
     if (!username || !login || !password) {
-        return failureResponse(res, ERROR_INVALID_REGISTRATION_DATA, 400);
+        return failureResponse(res, error_invalid_registration_data, 400);
     }
 
     try {
         const result = await registerUser(username, login, password);
-        successResponse(res, SUCCESS_USER_REGISTERED, result.data, result.status);
+        successResponse(res, success_user_registered, result.data, result.status);
     } catch (err) {
-        failureResponse(res, ERROR_REGISTRATION, 500, err);
+        failureResponse(res, error_registration, 500, err);
     }
 };
 
@@ -32,14 +32,14 @@ export const loginAccount = async (req: Request, res: Response) => {
     const { login, password } = req.body;
 
     if (!login || !password) {
-        return failureResponse(res, ERROR_INVALID_LOGIN_DATA, 400);
+        return failureResponse(res, error_invalid_login_data, 400);
     }
 
     try {
         const result = await loginUser(login, password);
-        successResponse(res, SUCCESS_LOGIN, result.data, result.status);
+        successResponse(res,  success_login, result.data, result.status);
     } catch (err) {
-        failureResponse(res, ERROR_LOGIN, 500, err);
+        failureResponse(res, error_login, 500, err);
     }
 };
 
@@ -47,13 +47,13 @@ export const fetchUsername = async (req: Request, res: Response) => {
     const login = req.query.login as string;
 
     if (!login) {
-        return failureResponse(res, ERROR_LOGIN_NOT_PROVIDED, 400);
+        return failureResponse(res, error_login_not_provided, 400);
     }
 
     try {
         const result = await getUsername(login);
-        successResponse(res, SUCCESS_USERNAME_FOUND, result.data, result.status);
+        successResponse(res, success_username_found, result.data, result.status);
     } catch (err) {
-        failureResponse(res, ERROR_FETCH_USERNAME, 500, err);
+        failureResponse(res, error_fetch_username, 500, err);
     }
 };
