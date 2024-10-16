@@ -25,7 +25,6 @@ import currencyRoutes from './routes/currencyRoutes';
         const currencies = await Currency.findAll();
         successResponse(res, 'Данные о валютах успешно получены', currencies);
       } catch (err) {
-        console.error('Ошибка при получении данных о валютах:', err);
         failureResponse(res, 'Ошибка при получении данных о валютах', 500, err);
       }
     });
