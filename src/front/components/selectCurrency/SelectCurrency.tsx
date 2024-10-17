@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-import { currencyStore } from '../../stores/CurrencyStore';
+import { currencyStore } from '../../stores/FromStore';
 import { ItemType } from "../../api/CurrencyApi";
 import "./SelectCurrency.css";
 

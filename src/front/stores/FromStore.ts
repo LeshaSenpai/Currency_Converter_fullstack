@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { fetchCurrencyData, getFavorite, addFavorite, removeFavorite, ItemType } from "../api/CurrencyApi";
+import { ItemType } from "../api/CurrencyApi";
+import { SuccessResponse, FailureResponse } from "../api/ResponseInterfaces";
 
 export type RawRatesType = {
     [key: string]: number;
@@ -28,15 +29,20 @@ class CurrencyStore {
 
     fetchCurrencyData = async () => {
         try {
-            const currencyData = await fetchCurrencyData();
-            const rates: RawRatesType = {};
+            const response = await fetch('http://localhost:5000/currencies');
+            const data = await response.json();
 
-            currencyData.forEach((item) => {
+            if (!data.success) {
+                throw new Error(data.message);
+            }
+
+            const rates: RawRatesType = {};
+            data.data.forEach((item: ItemType) => {
                 rates[item.code] = item.rate;
             });
 
             runInAction(() => {
-                this.items = currencyData.map((item) => ({
+                this.items = data.data.map((item: ItemType) => ({
                     ...item,
                     isFavorite: this.favorite.includes(item.code),
                 })).sort(this.sortByFavorite);
@@ -60,7 +66,7 @@ class CurrencyStore {
 
     addToFavorite = async (favoriteCode: string) => {
         const favorites = [...this.favorite]; 
-        if (!favorites.includes(favoriteCode)) { 
+        if (!favorites.includes(favoriteCode)) {
             favorites.push(favoriteCode);
             localStorage.setItem(this.account || '', JSON.stringify(favorites));
             runInAction(() => {
@@ -69,8 +75,9 @@ class CurrencyStore {
             await this.updateItemsWithFavorites(); 
         }
     }
+
     removeFromFavorite = async (favoriteCode: string) => {
-        const favorites = this.favorite.filter(item => item !== favoriteCode); 
+        const favorites = this.favorite.filter(item => item !== favoriteCode);
         localStorage.setItem(this.account || '', JSON.stringify(favorites));
         runInAction(() => {
             this.favorite = favorites;
@@ -87,12 +94,12 @@ class CurrencyStore {
     }
 
     updateItemsWithFavorites = async () => {
-        await this.getFavoriteData(); 
+        await this.getFavoriteData();
         runInAction(() => {
             this.items = this.items.map((item) => ({
                 ...item,
                 isFavorite: this.favorite.includes(item.code),
-            })).sort(this.sortByFavorite); 
+            })).sort(this.sortByFavorite);
         });
     }
 
@@ -113,24 +120,23 @@ class CurrencyStore {
                 body: JSON.stringify({ username, login, password }),
             });
 
-            const data = await response.json();
+            const data: SuccessResponse<any> | FailureResponse = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message);
+            }
 
             runInAction(() => {
-                if (response.ok) {
-                    this.successMessage = 'Регистрация успешна';
-                    this.account = login;
-                    localStorage.setItem('Account', login);
-                    localStorage.setItem(login, JSON.stringify([])); 
-                    this.error = null;
-                    this.updateItemsWithFavorites();
-                } else {
-                    this.error = data.error || 'Ошибка регистрации';
-                    this.successMessage = null;
-                }
+                this.successMessage = data.message;
+                this.account = login;
+                localStorage.setItem('Account', login);
+                localStorage.setItem(login, JSON.stringify([]));
+                this.updateItemsWithFavorites();
+                this.error = null;
             });
-        } catch (err) {
+        } catch (err: any) {
             runInAction(() => {
-                this.error = 'Ошибка при отправке данных на сервер';
+                this.error = err.message || 'Ошибка при отправке данных на сервер';
                 this.successMessage = null;
             });
         }
@@ -146,24 +152,23 @@ class CurrencyStore {
                 body: JSON.stringify({ login, password }),
             });
 
-            const data = await response.json();
+            const data: SuccessResponse<any> | FailureResponse = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message);
+            }
 
             runInAction(() => {
-                if (response.ok) {
-                    this.successMessage = 'Авторизация успешна';
-                    this.account = login; 
-                    localStorage.setItem('Account', login); 
-                    this.getFavoriteData(); 
-                    this.error = null;
-                    this.updateItemsWithFavorites();
-                } else {
-                    this.error = data.error || 'Ошибка авторизации';
-                    this.successMessage = null;
-                }
+                this.successMessage = data.message;
+                this.account = login;
+                localStorage.setItem('Account', login);
+                this.getFavoriteData();
+                this.updateItemsWithFavorites();
+                this.error = null;
             });
-        } catch (err) {
+        } catch (err: any) {
             runInAction(() => {
-                this.error = 'Ошибка при отправке данных на сервер';
+                this.error = err.message || 'Ошибка при отправке данных на сервер';
                 this.successMessage = null;
             });
         }
