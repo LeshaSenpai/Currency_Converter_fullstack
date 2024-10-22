@@ -3,7 +3,7 @@ import Account from './models/Account';
 import Currency from './models/Currency';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ path: './src/back/.env' });
 
 export const sequelize = new Sequelize({
     dialect: 'postgres',

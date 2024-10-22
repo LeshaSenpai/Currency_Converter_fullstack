@@ -51,7 +51,7 @@ function Header() {
                   {currencyStore.account ? (
                     <>
                       <li>
-                        <span>{username || 'Пользователь'}</span> {/* Имя пользователя или текст по умолчанию */}
+                        <span>{username || 'Пользователь'}</span>
                       </li>
                       <li>
                         <button onClick={handleLogout}>Выйти</button>

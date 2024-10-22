@@ -1,11 +1,11 @@
-require('dotenv').config();
+require('dotenv').config({ path: './src/back/.env' });
 
 module.exports = {
   development: {
-    username: "postgres",
+    username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: "currencyapi",
-    host: "127.0.0.1",
-    dialect: "postgres"
+    database: process.env.DB_NAME,
+    host: DB_HOSTNUMBER,
+    dialect: process.env.DB_DIALECT
   }
 };
