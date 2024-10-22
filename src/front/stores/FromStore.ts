@@ -1,10 +1,11 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { ItemType } from "../api/CurrencyApi";
+import { ItemType, fetchCurrencyData, registerUserApi, loginUserApi, getUsername } from "../api/CurrencyApi";
 import { SuccessResponse, FailureResponse } from "../api/ResponseInterfaces";
 
 export type RawRatesType = {
     [key: string]: number;
 };
+export const accountInLocalStorage= 'Account';
 
 class CurrencyStore {
     rates: RawRatesType | null = null;
@@ -13,7 +14,7 @@ class CurrencyStore {
     loading: boolean = true;
     error: string | null = null;
     successMessage: string | null = null;
-    account: string | null = localStorage.getItem('Account') || '';
+    account: string | null = localStorage.getItem(accountInLocalStorage) || '';
 
     constructor() {
         makeAutoObservable(this);
@@ -24,25 +25,19 @@ class CurrencyStore {
         if (this.account) {
             await this.getFavoriteData();
         }
-        await this.fetchCurrencyData();
+        await this.loadCurrencyData();
     }
 
-    fetchCurrencyData = async () => {
+    loadCurrencyData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/currencies');
-            const data = await response.json();
-
-            if (!data.success) {
-                throw new Error(data.message);
-            }
-
+            const data = await fetchCurrencyData();
             const rates: RawRatesType = {};
-            data.data.forEach((item: ItemType) => {
+            data.forEach((item: ItemType) => {
                 rates[item.code] = item.rate;
             });
 
             runInAction(() => {
-                this.items = data.data.map((item: ItemType) => ({
+                this.items = data.map((item: ItemType) => ({
                     ...item,
                     isFavorite: this.favorite.includes(item.code),
                 })).sort(this.sortByFavorite);
@@ -112,15 +107,7 @@ class CurrencyStore {
 
     registerUser = async (username: string, login: string, password: string) => {
         try {
-            const response = await fetch('http://localhost:5000/accounts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, login, password }),
-            });
-
-            const data: SuccessResponse<any> | FailureResponse = await response.json();
+            const data: SuccessResponse<any> | FailureResponse = await registerUserApi(username, login, password);
 
             if (!data.success) {
                 throw new Error(data.message);
@@ -129,7 +116,7 @@ class CurrencyStore {
             runInAction(() => {
                 this.successMessage = data.message;
                 this.account = login;
-                localStorage.setItem('Account', login);
+                localStorage.setItem(accountInLocalStorage, login);
                 localStorage.setItem(login, JSON.stringify([]));
                 this.updateItemsWithFavorites();
                 this.error = null;
@@ -144,15 +131,7 @@ class CurrencyStore {
 
     authoriseUser = async (login: string, password: string) => {
         try {
-            const response = await fetch('http://localhost:5000/accounts/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ login, password }),
-            });
-
-            const data: SuccessResponse<any> | FailureResponse = await response.json();
+            const data: SuccessResponse<any> | FailureResponse = await loginUserApi(login, password);
 
             if (!data.success) {
                 throw new Error(data.message);
@@ -161,7 +140,7 @@ class CurrencyStore {
             runInAction(() => {
                 this.successMessage = data.message;
                 this.account = login;
-                localStorage.setItem('Account', login);
+                localStorage.setItem(accountInLocalStorage, login);
                 this.getFavoriteData();
                 this.updateItemsWithFavorites();
                 this.error = null;
@@ -172,6 +151,20 @@ class CurrencyStore {
                 this.successMessage = null;
             });
         }
+    }
+
+    getUsername = async () => {
+        if (this.account) {
+            try {
+                const response = await getUsername(this.account);
+                if (response.success && response.data) {
+                    return response.data.username;
+                }
+            } catch (error) {
+                return '';
+            }
+        }
+        return '';
     }
 }
 

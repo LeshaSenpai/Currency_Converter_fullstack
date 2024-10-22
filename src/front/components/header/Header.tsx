@@ -1,34 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { currencyStore } from '../../stores/FromStore';
+import { currencyStore, accountInLocalStorage } from '../../stores/FromStore';
+import { getUsername } from '../../api/CurrencyApi';
 import "./Header.css";
 
 function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [username, setUsername] = useState('');
 
-  
   useEffect(() => {
-    if (currencyStore.account) {
-      fetch(`http://localhost:5000/getUsername?login=${currencyStore.account}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            setUsername(data.data.username);  
-          } else {
-            setUsername(''); 
-          }
-        })
-        .catch(() => setUsername(''));  
+    async function load() {
+      if (currencyStore.account) {
+        const result = await getUsername(currencyStore.account);
+        if (result.success && result.data) {
+          setUsername(result.data.username);
+        } else {
+          setUsername(''); 
+        }
+      }
     }
+    
+    load();
   }, [currencyStore.account]);
 
-  
   const handleLogout = () => {
     currencyStore.account = '';
-    localStorage.removeItem('Account'); 
-    currencyStore.updateItemsWithFavorites(); 
-    setUsername(''); 
+    localStorage.removeItem(accountInLocalStorage);
+    currencyStore.updateItemsWithFavorites();
+    setUsername('');
   };
 
   return (

@@ -1,29 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.removeFavorite = exports.addFavorite = exports.getFavorite = exports.getUsername = exports.loginUserApi = exports.registerUserApi = exports.fetchCurrencyData = void 0;
 const backendUrl = "http://localhost:5000";
-
-export type ItemType = {
-    text: string;
-    symbol: string;
-    code: string;
-    currencyCode: string;
-    rate: number;
-    isFavorite: boolean;
-    buttonClass: string;
-};
-
-export async function fetchCurrencyData(): Promise<ItemType[]> {
+async function fetchCurrencyData() {
     try {
         const response = await fetch(`${backendUrl}/currencies`);
         if (!response.ok) {
             throw new Error("Ошибка при загрузке данных о валютах");
         }
         const data = await response.json();
-        return data.data as ItemType[]; 
-    } catch (error) {
+        return data.data;
+    }
+    catch (error) {
         throw new Error("Ошибка при получении данных с бэкенда");
     }
 }
-
-export async function registerUserApi(username: string, login: string, password: string) {
+exports.fetchCurrencyData = fetchCurrencyData;
+async function registerUserApi(username, login, password) {
     try {
         const response = await fetch(`${backendUrl}/accounts`, {
             method: 'POST',
@@ -34,12 +27,13 @@ export async function registerUserApi(username: string, login: string, password:
         });
         const data = await response.json();
         return data;
-    } catch (error) {
+    }
+    catch (error) {
         return { success: false, message: 'Ошибка при регистрации' };
     }
 }
-
-export async function loginUserApi(login: string, password: string) {
+exports.registerUserApi = registerUserApi;
+async function loginUserApi(login, password) {
     try {
         const response = await fetch(`${backendUrl}/accounts/login`, {
             method: 'POST',
@@ -50,37 +44,40 @@ export async function loginUserApi(login: string, password: string) {
         });
         const data = await response.json();
         return data;
-    } catch (error) {
+    }
+    catch (error) {
         return { success: false, message: 'Ошибка при авторизации' };
     }
 }
-
-export async function getUsername(login: string): Promise<{ success: boolean, data?: { username: string }, error?: string }> {
+exports.loginUserApi = loginUserApi;
+async function getUsername(login) {
     try {
         const response = await fetch(`${backendUrl}/getUsername?login=${login}`);
         const data = await response.json();
-
         if (response.ok) {
             return { success: true, data: data.data };
-        } else {
+        }
+        else {
             return { success: false, error: data.error || 'Ошибка получения имени пользователя' };
         }
-    } catch (error) {
+    }
+    catch (error) {
         return { success: false, error: 'Ошибка сети' };
     }
 }
-
-export async function getFavorite(): Promise<string[]> {
+exports.getUsername = getUsername;
+async function getFavorite() {
     const savedFavorites = localStorage.getItem("favorites");
     return savedFavorites ? JSON.parse(savedFavorites) : [];
 }
-
-export async function addFavorite(favoriteCode: string) {
+exports.getFavorite = getFavorite;
+async function addFavorite(favoriteCode) {
     const favorites = await getFavorite();
     localStorage.setItem("favorites", JSON.stringify([...favorites, favoriteCode]));
 }
-
-export async function removeFavorite(favoriteCode: string) {
+exports.addFavorite = addFavorite;
+async function removeFavorite(favoriteCode) {
     const favorites = await getFavorite();
     localStorage.setItem("favorites", JSON.stringify(favorites.filter(item => item !== favoriteCode)));
 }
+exports.removeFavorite = removeFavorite;
